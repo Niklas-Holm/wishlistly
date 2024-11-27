@@ -66,7 +66,7 @@ export default function MainApp() {
                     <img className="nav-logo" src={logo} />
                 </div>
                 <div className="profile-widget">
-                    <a href="/profile">
+                    <Link to="/profile">
                         <img
                             className="nav-profile-image"
                             src={profileImageUrl}
@@ -76,7 +76,7 @@ export default function MainApp() {
                                 e.target.src = profile;
                             }}
                         />
-                    </a>
+                    </Link>
                 </div>
                 <div className="action-button-widget">
                     <Link to="/create-wish" className="action-button">

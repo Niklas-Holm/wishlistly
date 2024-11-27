@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, send_from_directory
+from flask import Flask, request, jsonify, session, send_from_directory, render_template
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_session import Session
@@ -21,6 +21,15 @@ migrate = Migrate(app, db)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
+frontend_folder = os.path.join(os.getcwd(), "..", "frontend")
+dist_folder = os.path.join(frontend_folder, "dist")
+
+@app.route("/", defaults={"filename":""})
+@app.route("/<path:filename>")
+def index(filename):
+    if not filename:
+        filename = "index.html"  # Serve the index.html file from the React build folder
+    return send_from_directory(dist_folder, filename)
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -34,6 +43,7 @@ def allowed_file(filename):
 
 with app.app_context():
     db.create_all()
+
 @app.route("/@me", methods=["GET"])
 def get_current_user():
     user_id = session.get("user_id")
@@ -509,4 +519,4 @@ def reserve_wish(wish_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
