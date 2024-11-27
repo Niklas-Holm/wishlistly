@@ -22,12 +22,12 @@ export default function EditWish() {
         (async () => {
             try {
                 // Fetch the authenticated user
-                const resp = await httpClient.get("http://127.0.0.1:5000/@me");
+                const resp = await httpClient.get("/@me");
                 setUser(resp.data);
                 console.log("Authenticated user: ", resp.data);
 
                 // Fetch the wish details using GET request
-                const wishResp = await httpClient.get(`http://127.0.0.1:5000/api/wishes/${wishId}`);
+                const wishResp = await httpClient.get(`/api/wishes/${wishId}`);
                 const wishData = wishResp.data;
 
                 // Populate the state with fetched wish data
@@ -81,7 +81,7 @@ export default function EditWish() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/wishes/${wishId}`, {
+            const response = await fetch(`/api/wishes/${wishId}`, {
                 method: 'PUT',  // Use PUT for updating the existing wish
                 body: formData,
                 credentials: 'include', // This ensures cookies (session data) are sent with the request

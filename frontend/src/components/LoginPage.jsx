@@ -12,7 +12,7 @@ export default function LoginPage() {
         console.log('Password:', password);
 
         try {
-            const resp = await httpClient.post("http://127.0.0.1:5000/login", { email, password });
+            const resp = await httpClient.post("/login", { email, password });
             window.location.href = '/';
         } catch (error) {
             if (error.response && error.response.status === 401) {

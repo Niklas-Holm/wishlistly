@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 export default function People (props) {
     const navigate = useNavigate()
     const profileImageUrl = props.user.profile_photo
-        ? `http://127.0.0.1:5000/uploads/${props.user.profile_photo}`
+        ? `/uploads/${props.user.profile_photo}`
         : profile;
 
 
     const handleRemove = async () => {
         const user_id = props.user.id
 
-        const resp = await httpClient.post("http://127.0.0.1:5000/api/remove-user", { user_id });
+        const resp = await httpClient.post("/api/remove-user", { user_id });
         console.log(resp)
 
         window.location.reload();

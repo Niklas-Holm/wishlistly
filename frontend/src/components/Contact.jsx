@@ -4,14 +4,14 @@ import httpClient from "../httpClient";
 
 export default function Contact(props) {
     const profileImageUrl = props.user.profile_photo
-        ? `http://127.0.0.1:5000/uploads/${props.user.profile_photo}`
+        ? `/uploads/${props.user.profile_photo}`
         : profile;
 
 
     const handleAdd = async () => {
         const user_id = props.user.id
 
-        const resp = await httpClient.post("http://127.0.0.1:5000/api/add-user", { user_id });
+        const resp = await httpClient.post("/api/add-user", { user_id });
         console.log(resp)
 
         window.location.reload();

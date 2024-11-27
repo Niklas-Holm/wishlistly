@@ -2,13 +2,13 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 
 export default function Wish({ wish }) {
-    const imageUrl = `http://127.0.0.1:5000/uploads/${wish.product_photo}`;
+    const imageUrl = `/uploads/${wish.product_photo}`;
 
     const navigate = useNavigate();
 
     const handleDelete = async (wishId) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/delete-wish', {
+            const response = await fetch('/api/delete-wish', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

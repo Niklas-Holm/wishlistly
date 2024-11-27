@@ -16,7 +16,7 @@ export default function MainApp() {
         // Fetch logged-in user data (including their wishes)
         const fetchUserData = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:5000/@me", {
+                const response = await fetch("/@me", {
                     method: "GET",
                     credentials: "include",
                 });
@@ -36,7 +36,7 @@ export default function MainApp() {
         // Fetch all users data for contacts, limited to necessary fields
         const fetchUsers = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:5000/api/get_all_users", {
+                const response = await fetch("/api/get_all_users", {
                     method: "GET",
                     credentials: "include",
                 });
@@ -56,7 +56,7 @@ export default function MainApp() {
     }, []);
 
     const profileImageUrl = profile_photo
-        ? `http://127.0.0.1:5000/uploads/${profile_photo}`
+        ? `/uploads/${profile_photo}`
         : profile;
 
     return (

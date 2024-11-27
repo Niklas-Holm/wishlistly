@@ -13,7 +13,7 @@ export default function ViewWish() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/api/users/${user_id}/wishes`, {
+                const response = await fetch(`/api/users/${user_id}/wishes`, {
                     method: "GET",
                     credentials: "include",
                 });

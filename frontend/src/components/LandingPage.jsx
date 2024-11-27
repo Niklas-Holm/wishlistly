@@ -10,7 +10,7 @@ const LandingPage = () => {
     useEffect(() => {
         (async () => {
             try {
-                const resp = await httpClient.get("http://127.0.0.1:5000/@me");
+                const resp = await httpClient.get("/@me");
                 setUser(resp.data);
                 console.log("Authenticated user: ", resp.data);
             } catch (error) {

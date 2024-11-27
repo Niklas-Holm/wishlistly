@@ -15,7 +15,7 @@ export default function ChangePassword () {
     useEffect(() => {
         (async () => {
             try {
-                const resp = await httpClient.get("http://127.0.0.1:5000/@me");
+                const resp = await httpClient.get("/@me");
                 setUser(resp.data);
                 console.log("Authenticated user: ", resp.data);
             } catch (error) {
@@ -35,7 +35,7 @@ export default function ChangePassword () {
             alert("Passwords do not match");
         } else {
             try {
-                const resp = await httpClient.post("http://127.0.0.1:5000/change-password", { newPassword });
+                const resp = await httpClient.post("/change-password", { newPassword });
                 alert("Password changed successfully!");
                 navigate('/profile'); // Use navigate from react-router for redirection
             } catch (error) {

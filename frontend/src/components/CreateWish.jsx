@@ -22,7 +22,7 @@ export default function CreateWish() {
     useEffect(() => {
         (async () => {
             try {
-                const resp = await httpClient.get("http://127.0.0.1:5000/@me");
+                const resp = await httpClient.get("/@me");
                 setUser(resp.data);
                 console.log("Authenticated user: ", resp.data);
             } catch (error) {
@@ -64,7 +64,7 @@ export default function CreateWish() {
         }
     
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/wishes', {
+            const response = await fetch('/api/wishes', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include', // This ensures cookies (session data) are sent with the request

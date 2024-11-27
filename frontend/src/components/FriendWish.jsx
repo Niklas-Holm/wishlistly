@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import httpClient from "../httpClient";
 
 export default function FriendWish(props) {
-    const imageUrl = `http://127.0.0.1:5000/uploads/${props.wish.product_photo}`;
+    const imageUrl = `/uploads/${props.wish.product_photo}`;
     const [reserved, setReserved] = useState(props.wish.reserved)
 
     const handleGOTO = () => {
@@ -15,7 +15,7 @@ export default function FriendWish(props) {
 
     const handleReserve = async () => {
         try {
-            const response = await httpClient.post(`http://127.0.0.1:5000/api/wishes/${props.wish.id}/reserve`);
+            const response = await httpClient.post(`/api/wishes/${props.wish.id}/reserve`);
             setReserved(response.data.reserved);
             console.log("Wish reserved successfully:", response.data);
         } catch (error) {

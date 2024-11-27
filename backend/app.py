@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
 bcrypt = Bcrypt(app)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(app, supports_credentials=True, origins=["https://wishlistly.onrender.com"])
 server_session = Session(app)
 db.init_app(app)
 migrate = Migrate(app, db)

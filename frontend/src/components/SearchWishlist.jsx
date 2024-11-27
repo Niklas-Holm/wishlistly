@@ -25,7 +25,7 @@ export default function SearchWishlist() {
             (async () => {
                 try {
                     const resp = await httpClient.get(
-                        `http://127.0.0.1:5000/api/search-users?searchField=${debouncedSearchField}`
+                        `/api/search-users?searchField=${debouncedSearchField}`
                     );
                     console.log(resp.data);
                     setSearchResults(resp.data.users);

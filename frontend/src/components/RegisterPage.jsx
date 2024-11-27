@@ -45,7 +45,7 @@ export default function RegisterPage() {
                 console.log(key, value);
             }
 
-            const resp = await httpClient.post("http://127.0.0.1:5000/register", formData);
+            const resp = await httpClient.post("/register", formData);
             console.log("Registration successful:", resp.data);
             navigate("/"); // Redirect to login page after successful registration
         } catch (error) {
