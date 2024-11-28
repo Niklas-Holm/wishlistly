@@ -6,8 +6,25 @@ from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
 from config import ApplicationConfig
 from models import db, User, Wish
+from dotenv import load_dotenv
 import os
 import json
+
+# Load the master .env file first
+load_dotenv()  # This loads the .env file
+
+# Get the value of FLASK_ENV to determine which specific .env file to load
+flask_env = os.environ.get('FLASK_ENV', 'development')  # Default to 'development' if not set
+
+# Load the environment-specific file
+if flask_env == 'development':
+    load_dotenv('.env.development')
+elif flask_env == 'production':
+    load_dotenv('.env.production')
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+print(f"Using database: {DATABASE_URL}")
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)

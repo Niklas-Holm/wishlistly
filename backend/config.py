@@ -3,8 +3,10 @@ import os
 import redis
 
 # Automatically find and load the correct .env file based on ENV
-env_file = find_dotenv(f".env.{os.environ.get('ENV', 'development')}")
+env_file = find_dotenv(f".env.{os.environ.get('FLASK_ENV', 'development')}")
 load_dotenv(env_file)
+
+print(f"Using environment: {os.environ.get('FLASK_ENV')}")
 
 class ApplicationConfig:
     # Common configurations
