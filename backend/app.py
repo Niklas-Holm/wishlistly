@@ -14,7 +14,7 @@ import json
 load_dotenv()  # This loads the .env file
 
 # Get the value of FLASK_ENV to determine which specific .env file to load
-flask_env = os.environ.get('FLASK_ENV', 'development')  # Default to 'development' if not set
+flask_env = os.environ.get('FLASK_ENV')  # Default to 'development' if not set
 
 # Load the environment-specific file
 if flask_env == 'development':

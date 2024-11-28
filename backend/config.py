@@ -3,8 +3,16 @@ import os
 import redis
 
 # Automatically find and load the correct .env file based on ENV
-env_file = find_dotenv(f".env.{os.environ.get('FLASK_ENV', 'development')}")
-load_dotenv(env_file)
+load_dotenv()  # This loads the .env file
+
+# Get the value of FLASK_ENV to determine which specific .env file to load
+flask_env = os.environ.get('FLASK_ENV')  # Default to 'development' if not set
+
+# Load the environment-specific file
+if flask_env == 'development':
+    load_dotenv('.env.development')
+elif flask_env == 'production':
+    load_dotenv('.env.production')
 
 print(f"Using environment: {os.environ.get('FLASK_ENV')}")
 
