@@ -8,6 +8,13 @@ load_dotenv(env_file)
 
 print(f"Using environment: {os.environ.get('FLASK_ENV')}")
 
+redis_url = os.environ.get('REDIS_URL')  # This should be defined in your .env file
+
+if redis_url:
+    print(f"Using Redis server: {redis_url}")
+else:
+    print("Redis server is not configured.")
+
 class ApplicationConfig:
     # Common configurations
     SECRET_KEY = os.environ.get("SECRET_KEY")
