@@ -8,17 +8,23 @@ load_dotenv(env_file)
 
 class ApplicationConfig:
     # Common configurations
-    SECRET_KEY = os.environ.get("SECRET_KEY")  
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = False
-    SQLALCHEMY_DATABASE_URI = r"sqlite:///./db.sqlite"
+    SQLALCHEMY_ECHO = os.environ.get("ENV", "development") == "development"  # Enable echo in development
 
+    # Environment-specific database configuration
+    if os.environ.get("ENV") == "production":
+        SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")  # Use production database
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL", "sqlite:///./db.sqlite")  # Default to SQLite
+
+    # Redis configuration
+    REDIS_URL = os.environ.get("REDIS_URL")
     SESSION_TYPE = "redis"
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
-    SESSION_COOKIE_SAMESITE = "None"
-    SESSION_COOKIE_SECURE = True
-
-    # Environment-specific Redis configuration
-    REDIS_URL = os.environ.get("REDIS_URL")
     SESSION_REDIS = redis.from_url(REDIS_URL)
+    
+    # Cookie settings
+    SESSION_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_SECURE = os.environ.get("ENV") == "production"  # Secure cookies only in production
