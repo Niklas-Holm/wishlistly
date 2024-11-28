@@ -9,6 +9,7 @@ from models import db, User, Wish
 from dotenv import load_dotenv
 import os
 import json
+from uuid import uuid4
 
 # Load the master .env file first
 load_dotenv()  # This loads the .env file
@@ -117,12 +118,21 @@ def register_user():
         return jsonify({"error": "User already exists"}), 409
     
     image_filename = None
+
     if image and allowed_file(image.filename):
-        image_filename = secure_filename(image.filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        original_extension = os.path.splitext(image.filename)[1]
+        unique_filename = f"{uuid4().hex}{original_extension}"
+        secure_name = secure_filename(unique_filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_name))
+        image_filename = secure_name
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(email=email, password=hashed_password, name=name, phone_number=phone_number, profile_photo=image_filename)
+    new_user = User(
+        email=email, 
+        password=hashed_password, 
+        name=name, 
+        phone_number=phone_number, 
+        profile_photo=image_filename)
     
     db.session.add(new_user)
     db.session.commit()
@@ -211,9 +221,13 @@ def create_wish():
         return jsonify({"error": "Missing required fields"}), 400
 
     image_filename = None
+
     if image and allowed_file(image.filename):
-        image_filename = secure_filename(image.filename)
-        image.save(f'uploads/{image_filename}')
+        original_extension = os.path.splitext(image.filename)[1]
+        unique_filename = f"{uuid4().hex}{original_extension}"
+        secure_name = secure_filename(unique_filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_name))
+        image_filename = secure_name
 
     # Creating the new wish in the database
     new_wish = Wish(
