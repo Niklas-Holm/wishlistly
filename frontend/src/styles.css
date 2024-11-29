@@ -214,9 +214,9 @@ html, body {
   cursor: pointer;
 }
 
-.action-button-bottom {
+.action-button-top {
   padding-bottom: 0px;
-  margin-bottom: 0px;
+  margin-bottom: 20px;
 }
 
 .header-logo {

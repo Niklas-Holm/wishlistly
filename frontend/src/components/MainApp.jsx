@@ -77,13 +77,13 @@ export default function MainApp() {
                     </Link>
                 </div>
                 <div className="action-button-widget">
-                    <Link to="/create-wish" className="action-button">
-                        <button type="button" className="action-button">
+                    <Link to="/create-wish" className="action-button action-button-top">
+                        <button type="button" className="action-button action-button-top">
                             CREATE NEW WISH
                         </button>
                     </Link>
                     <Link to="/search-wishlist" className="action-button">
-                        <button type="button" className="action-button action-button-bottom">
+                        <button type="button" className="action-button">
                             FIND A WISHLIST
                         </button>
                     </Link>
