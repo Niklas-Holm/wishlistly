@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import httpClient from "../httpClient";
 
 export default function FriendWish(props) {
-    const imageUrl = `/uploads/${props.wish.product_photo}`;
+    const imageUrl = props.wish.product_photo;
     const [reserved, setReserved] = useState(props.wish.reserved)
 
     const handleGOTO = () => {

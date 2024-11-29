@@ -55,9 +55,7 @@ export default function MainApp() {
         fetchUsers(); // Fetch all users when component mounts
     }, []);
 
-    const profileImageUrl = profile_photo
-        ? `/uploads/${profile_photo}`
-        : profile;
+    const profileImageUrl = profile_photo || profile;
 
     return (
         <div>

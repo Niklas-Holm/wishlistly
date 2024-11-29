@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 
 export default function Wish({ wish }) {
-    const imageUrl = `/uploads/${wish.product_photo}`;
+    const imageUrl = wish.product_photo
 
     const navigate = useNavigate();
 

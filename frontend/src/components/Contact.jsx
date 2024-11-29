@@ -3,9 +3,7 @@ import profile from "../assets/profile.png";
 import httpClient from "../httpClient";
 
 export default function Contact(props) {
-    const profileImageUrl = props.user.profile_photo
-        ? `/uploads/${props.user.profile_photo}`
-        : profile;
+    const profileImageUrl = props.user.profile_photo || profile;
 
 
     const handleAdd = async () => {

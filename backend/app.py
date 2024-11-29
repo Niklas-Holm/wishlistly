@@ -9,7 +9,8 @@ from models import db, User, Wish
 from dotenv import load_dotenv
 import os
 import json
-from uuid import uuid4
+import cloudinary
+import cloudinary.uploader
 
 # Load the master .env file first
 load_dotenv()  # This loads the .env file
@@ -31,16 +32,22 @@ app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
 bcrypt = Bcrypt(app)
-CORS(app, supports_credentials=True, origins=["https://wishlistly.onrender.com"])
+CORS(app, supports_credentials=True, origins=["https://wishlistly.onrender.com", "http://127.0.0.1:5000"])
 server_session = Session(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 frontend_folder = os.path.join(os.getcwd(), "..", "frontend")
 dist_folder = os.path.join(frontend_folder, "dist")
+
+cloudinary.config(
+    cloud_name="df0vyvm9g",
+    api_key="579314177614833",
+    api_secret=os.environ.get('CLOUDINARY_API_KEY'),  # Replace with your actual secret
+    secure=True
+)
 
 @app.route("/", defaults={"filename":""})
 @app.route("/<path:filename>")
@@ -48,8 +55,6 @@ def index(filename):
     if not filename:
         filename = "index.html"  # Serve the index.html file from the React build folder
     return send_from_directory(dist_folder, filename)
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -65,7 +70,7 @@ with app.app_context():
 @app.route("/@me", methods=["GET"])
 def get_current_user():
     user_id = session.get("user_id")
-    
+
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
@@ -116,15 +121,19 @@ def register_user():
     user_exists = User.query.filter_by(email=email).first() is not None
     if user_exists:
         return jsonify({"error": "User already exists"}), 409
-    
-    image_filename = None
+
+    image_url = None
 
     if image and allowed_file(image.filename):
-        original_extension = os.path.splitext(image.filename)[1]
-        unique_filename = f"{uuid4().hex}{original_extension}"
-        secure_name = secure_filename(unique_filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_name))
-        image_filename = secure_name
+        try:
+            # Upload the file directly to Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                image, folder="profile_photos/"
+            )
+            image_url = upload_result["secure_url"]  # Get the URL of the uploaded image
+        except Exception as e:
+            print(f"Error uploading to Cloudinary: {e}")
+            return jsonify({"error": "Failed to upload image"}), 500
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(
@@ -132,7 +141,7 @@ def register_user():
         password=hashed_password, 
         name=name, 
         phone_number=phone_number, 
-        profile_photo=image_filename)
+        profile_photo=image_url)
     
     db.session.add(new_user)
     db.session.commit()
@@ -220,14 +229,18 @@ def create_wish():
     if not product_name or not price or not description or not url:
         return jsonify({"error": "Missing required fields"}), 400
 
-    image_filename = None
+    image_url = None  # This will store the Cloudinary URL
 
     if image and allowed_file(image.filename):
-        original_extension = os.path.splitext(image.filename)[1]
-        unique_filename = f"{uuid4().hex}{original_extension}"
-        secure_name = secure_filename(unique_filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_name))
-        image_filename = secure_name
+        try:
+            # Upload the image to Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                image, folder="wish_images/"
+            )
+            image_url = upload_result["secure_url"]  # Get the Cloudinary URL
+        except Exception as e:
+            print(f"Error uploading to Cloudinary: {e}")
+            return jsonify({"error": "Failed to upload image"}), 500
 
     # Creating the new wish in the database
     new_wish = Wish(
@@ -235,7 +248,7 @@ def create_wish():
         price=price,
         description=description,
         product_link=url,
-        product_photo=image_filename,
+        product_photo=image_url,  # Save the Cloudinary URL in the database
         user_id=user_id  # Associate the wish with the logged-in user
     )
 
@@ -251,6 +264,7 @@ def create_wish():
         "description": new_wish.description,
         "created_at": new_wish.created_at.isoformat(),
     }), 201
+
 
 @app.route("/api/search-users", methods=["GET"])
 def search_users():
@@ -391,16 +405,14 @@ def edit_wish(wish_id):
 
     # Handle the new image (if any)
     if image and allowed_file(image.filename):
-        # Delete the old image file from the server if it exists
-        if wish.product_photo:
-            old_image_path = os.path.join(app.config['UPLOAD_FOLDER'], wish.product_photo)
-            if os.path.exists(old_image_path):
-                os.remove(old_image_path)
-        
-        # Save the new image
-        image_filename = secure_filename(image.filename)
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-        wish.product_photo = image_filename
+        try:
+            # Upload the new image to Cloudinary
+            upload_result = cloudinary.uploader.upload(image, folder="wish_images/")
+            wish.product_photo = upload_result["secure_url"]  # Save Cloudinary URL
+            db.session.commit()
+        except Exception as e:
+            print(f"Error uploading to Cloudinary: {e}")
+            return jsonify({"error": "Failed to upload image"}), 500
 
     # Commit the updated wish to the database
     db.session.commit()
@@ -493,12 +505,19 @@ def update_profile_photo():
     if not allowed_file(image.filename):
         return jsonify({"error": "Invalid file type"}), 400  # Invalid file extension
 
-    # Save the image
-    image_filename = secure_filename(image.filename)
-    image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+    try:
+        # Upload the image to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            image, folder="profile_photos/"
+        )
+        # Get the secure URL of the uploaded image
+        image_url = upload_result["secure_url"]
+    except Exception as e:
+        print(f"Error uploading to Cloudinary: {e}")
+        return jsonify({"error": "Failed to upload image"}), 500  # Error uploading image
 
-    # Update the user's profile photo
-    user.profile_photo = image_filename
+    # Update the user's profile photo with the Cloudinary URL
+    user.profile_photo = image_url
     db.session.commit()
 
     return jsonify({

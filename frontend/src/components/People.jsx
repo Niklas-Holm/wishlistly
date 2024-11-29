@@ -5,9 +5,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function People (props) {
     const navigate = useNavigate()
-    const profileImageUrl = props.user.profile_photo
-        ? `/uploads/${props.user.profile_photo}`
-        : profile;
+    const profileImageUrl = props.user.profile_photo || profile;
 
 
     const handleRemove = async () => {
