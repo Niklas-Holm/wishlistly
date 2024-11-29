@@ -207,8 +207,8 @@ html, body {
   font-size: 1.5rem;
   white-space: normal;
   word-wrap: break-word;
-  margin-bottom: 20px;
-  padding: 0px 25px;
+  margin-bottom: 0px;
+  padding: 0px 0px;
   width: 100%;
   text-align: center;
   cursor: pointer;
