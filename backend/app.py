@@ -16,7 +16,7 @@ import cloudinary.uploader
 load_dotenv()  # This loads the .env file
 
 # Get the value of FLASK_ENV to determine which specific .env file to load
-flask_env = os.environ.get('FLASK_ENV')  # Default to 'development' if not set
+flask_env = os.environ.get('FLASK_ENV')
 
 # Load the environment-specific file
 if flask_env == 'development':
@@ -45,7 +45,7 @@ dist_folder = os.path.join(frontend_folder, "dist")
 cloudinary.config(
     cloud_name="df0vyvm9g",
     api_key="579314177614833",
-    api_secret=os.environ.get('CLOUDINARY_API_KEY'),  # Replace with your actual secret
+    api_secret=os.environ.get('CLOUDINARY_API_KEY'),
     secure=True
 )
 
@@ -53,7 +53,7 @@ cloudinary.config(
 @app.route("/<path:filename>")
 def index(filename):
     if not filename:
-        filename = "index.html"  # Serve the index.html file from the React build folder
+        filename = "index.html"
     return send_from_directory(dist_folder, filename)
 
 @app.route('/uploads/<filename>')
@@ -79,7 +79,6 @@ def get_current_user():
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Decode the friends field from JSON
     friends_list = []
     if user.friends:
         friends_list = json.loads(user.friends)
@@ -98,12 +97,12 @@ def get_current_user():
                 "price": wish.price,
                 "product_link": wish.product_link,
                 "product_photo": wish.product_photo,
-                "reserved": wish.reserved,  # Include the reserved field
+                "reserved": wish.reserved,
                 "created_at": wish.created_at.isoformat() if wish.created_at else None
             }
             for wish in user.wishes
         ],
-        "friends": friends_list  # Add the friends list to the response
+        "friends": friends_list 
     })
 
 @app.route("/register", methods=["POST"])
@@ -112,12 +111,11 @@ def register_user():
     password = request.form.get("password")
     name = request.form.get("name", "Anonymous")
     phone_number = request.form.get("phone_number")
-    image = request.files.get('image')  # Handling the file upload
+    image = request.files.get('image')
 
-    print("Received Data:", request.form)  # Debug log to see form data
-    print("Received Image:", image)  # Debug log to see if image is in the request
+    print("Received Data:", request.form)
+    print("Received Image:", image)
 
-    # Check if the user already exists
     user_exists = User.query.filter_by(email=email).first() is not None
     if user_exists:
         return jsonify({"error": "User already exists"}), 409
@@ -126,11 +124,10 @@ def register_user():
 
     if image and allowed_file(image.filename):
         try:
-            # Upload the file directly to Cloudinary
             upload_result = cloudinary.uploader.upload(
                 image, folder="profile_photos/"
             )
-            image_url = upload_result["secure_url"]  # Get the URL of the uploaded image
+            image_url = upload_result["secure_url"]
         except Exception as e:
             print(f"Error uploading to Cloudinary: {e}")
             return jsonify({"error": "Failed to upload image"}), 500
